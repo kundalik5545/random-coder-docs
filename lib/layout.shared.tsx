@@ -8,6 +8,7 @@ import Link from "next/link";
  * you can customise layouts individually from:
  * Home Layout: app/(home)/layout.tsx
  * Docs Layout: app/docs/layout.tsx
+ * Blog Layout: app/blog/layout.tsx
  */
 export function baseOptions(): BaseLayoutProps {
   return {
@@ -38,9 +39,9 @@ export function baseOptions(): BaseLayoutProps {
         icon: <BookIcon />,
         text: "Blog",
         url: "/blog",
-        secondary: false,
+        active: "nested-url",
       },
     ],
-    githubUrl: "https://github.com",
+    githubUrl: "https://github.com/kundalik5545/random-coder-docs",
   };
 }
