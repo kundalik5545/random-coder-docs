@@ -1,19 +1,20 @@
-import { blogSource, getBlogPageImage, getPageImage } from "@/lib/source";
+import { fumadocsSource, getFumadocsPageImage } from "@/lib/source";
+import { getMDXComponents } from "@/mdx-components";
+import { createRelativeLink } from "fumadocs-ui/mdx";
 import {
   DocsBody,
   DocsDescription,
   DocsPage,
   DocsTitle,
 } from "fumadocs-ui/page";
-import { notFound } from "next/navigation";
-import { getMDXComponents } from "@/mdx-components";
 import type { Metadata } from "next";
-import { createRelativeLink } from "fumadocs-ui/mdx";
+import { notFound } from "next/navigation";
 
-export default async function Page(props: PageProps<"/blog/[[...slug]]">) {
+export default async function Page(props: PageProps<"/fumadocs/[[...slug]]">) {
   const params = await props.params;
-  const page = blogSource.getPage(params.slug);
+  const page = fumadocsSource.getPage(params.slug);
   if (!page) return notFound();
+
   const MDX = page.data.body;
 
   return (
@@ -24,7 +25,7 @@ export default async function Page(props: PageProps<"/blog/[[...slug]]">) {
         <MDX
           components={getMDXComponents({
             // this allows you to link to other pages with relative file paths
-            a: createRelativeLink(blogSource, page),
+            a: createRelativeLink(fumadocsSource, page),
           })}
         />
       </DocsBody>
@@ -33,21 +34,21 @@ export default async function Page(props: PageProps<"/blog/[[...slug]]">) {
 }
 
 export async function generateStaticParams() {
-  return blogSource.generateParams();
+  return fumadocsSource.generateParams();
 }
 
 export async function generateMetadata(
-  props: PageProps<"/blog/[[...slug]]">
+  props: PageProps<"/fumadocs/[[...slug]]">
 ): Promise<Metadata> {
   const params = await props.params;
-  const page = blogSource.getPage(params.slug);
+  const page = fumadocsSource.getPage(params.slug);
   if (!page) return notFound();
 
   return {
     title: page.data.title,
     description: page.data.description,
     openGraph: {
-      images: getBlogPageImage(page).url,
+      images: getFumadocsPageImage(page).url,
     },
   };
 }

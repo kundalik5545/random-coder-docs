@@ -1,0 +1,45 @@
+---
+title: Fumadocs setup guide
+description: Fumadocs setup guide.
+---
+
+## Introduction
+
+There are two option to create a fumadocs.
+
+1. Create a Nextjs project and then install fumadocs package
+2. Automatic creation - use fumadocs cli command to create a project - Best Way ✅
+
+We will use second option which is **Automatic CLI Command**. Which is a best and easiest way to create a new project.
+
+## 🚀 Automatic CLI Way
+
+<Tabs groupId="package-manager" items={["npm", "pnpm", "yarn"]} persist>
+  <Tab value="npm">npm create fumadocs-app</Tab>
+  <Tab value="pnpm">pnpm create fumadocs-app</Tab>
+  <Tab value="yarn">yarn create fumadocs-app</Tab>
+</Tabs>
+
+After running any one of cli command then app will ask some questions
+
+It will ask you the built-in template to use:
+
+- **React.js framework**: Next.js, Waku, React Router, Tanstack Start.
+- **Content source**: Fumadocs MDX.
+
+## 📂 Collections in fumadocs
+
+Collections are groups which will help to seperate the Content in different groups.
+
+🧐 examples:-
+
+1. Docs
+2. blog
+3. fumadocs
+
+To create Collections we have to follow some steps.
+
+1. First create a source in **lib/source.ts** file
+2. Then create a Collections inside **source.config.ts** file
+3. Create new folder inside **_content folder_**
+4. Now create a page folder inside app dir

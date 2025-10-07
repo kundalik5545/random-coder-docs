@@ -32,3 +32,16 @@ export const blogCollection = defineDocs({
     schema: metaSchema,
   },
 });
+
+export const fumadocsCollection = defineDocs({
+  dir: "./content/fumadocs",
+  docs: {
+    schema: frontmatterSchema,
+    postprocess: {
+      includeProcessedMarkdown: true,
+    },
+  },
+  meta: {
+    schema: metaSchema,
+  },
+});

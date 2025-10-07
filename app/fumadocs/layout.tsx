@@ -1,13 +1,17 @@
 import { baseOptions } from "@/lib/layout.shared";
-import { blogSource } from "@/lib/source";
+import { fumadocsSource } from "@/lib/source";
 import { DocsLayout } from "fumadocs-ui/layouts/notebook";
 import { Book, BookIcon } from "lucide-react";
 
-const BlogLayout = ({ children }: LayoutProps<"/blog">) => {
+const FumadocsLayout = ({ children }: LayoutProps<"/fumadocs">) => {
+  const base = baseOptions();
   return (
     <DocsLayout
-      tree={blogSource.pageTree}
-      {...baseOptions()}
+      tree={fumadocsSource.pageTree}
+      {...base}
+      nav={{
+        ...base.nav,
+      }}
       links={[
         {
           icon: <BookIcon />,
@@ -34,4 +38,4 @@ const BlogLayout = ({ children }: LayoutProps<"/blog">) => {
   );
 };
 
-export default BlogLayout;
+export default FumadocsLayout;

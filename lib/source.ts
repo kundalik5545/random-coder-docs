@@ -1,4 +1,4 @@
-import { docs, blogCollection } from "@/.source";
+import { docs, blogCollection, fumadocsCollection } from "@/.source";
 import { type InferPageType, loader } from "fumadocs-core/source";
 import { lucideIconsPlugin } from "fumadocs-core/source/lucide-icons";
 import { createMDXSource } from "fumadocs-mdx";
@@ -36,6 +36,7 @@ ${processed}`;
 //   source: createMDXSource(blogPost),
 // });
 
+// ---------------------------------------------------------------------//
 export const blogSource = loader({
   baseUrl: "/blog",
   source: blogCollection.toFumadocsSource(),
@@ -58,3 +59,34 @@ export async function getBlogLLMText(page: InferPageType<typeof blogSource>) {
 
 ${processed}`;
 }
+
+// ---------------------------------------------------------------------//
+// Fumadocs collection
+export const fumadocsSource = loader({
+  baseUrl: "/fumadocs",
+  source: fumadocsCollection.toFumadocsSource(),
+  plugins: [lucideIconsPlugin()],
+});
+
+export function getFumadocsPageImage(
+  page: InferPageType<typeof fumadocsSource>
+) {
+  const segments = [...page.slugs, "image.png"];
+
+  return {
+    segments,
+    url: `/og/fumadocs/${segments.join("/")}`,
+  };
+}
+
+export async function getFumadocsLLMText(
+  page: InferPageType<typeof fumadocsSource>
+) {
+  const processed = await page.data.getText("processed");
+
+  return `# ${page.data.title} (${page.url})
+
+${processed}`;
+}
+
+// ---------------------------------------------------------------------//
