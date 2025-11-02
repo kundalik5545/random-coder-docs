@@ -1,34 +1,10 @@
 import { baseOptions } from "@/lib/layout.shared";
-import { blogSource } from "@/lib/source";
+import { blogSource, filterIndexPages } from "@/lib/source";
 import { DocsLayout } from "fumadocs-ui/layouts/notebook";
-import { Book, BookIcon } from "lucide-react";
 
 const BlogLayout = ({ children }: LayoutProps<"/blog">) => {
   return (
-    <DocsLayout
-      tree={blogSource.pageTree}
-      {...baseOptions()}
-      links={[
-        {
-          icon: <BookIcon />,
-          text: "Blog",
-          url: "/blog",
-          active: "nested-url",
-        },
-        {
-          icon: <BookIcon />,
-          text: "Docs",
-          url: "/docs",
-          active: "nested-url",
-        },
-        {
-          icon: <Book />,
-          text: "FumaDocs",
-          url: "/fumadocs",
-          active: "nested-url",
-        },
-      ]}
-    >
+    <DocsLayout tree={filterIndexPages(blogSource.pageTree)} {...baseOptions()}>
       {children}
     </DocsLayout>
   );

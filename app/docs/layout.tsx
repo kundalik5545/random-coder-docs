@@ -1,35 +1,11 @@
-import { DocsLayout } from "fumadocs-ui/layouts/docs";
+import { DocsLayout } from "fumadocs-ui/layouts/notebook";
 import { baseOptions } from "@/lib/layout.shared";
-import { source } from "@/lib/source";
-import { Book, BookIcon } from "lucide-react";
+import { source, filterIndexPages } from "@/lib/source";
 
 export default function Layout({ children }: LayoutProps<"/docs">) {
   return (
-    <DocsLayout
-      tree={source.pageTree}
-      {...baseOptions()}
-      links={[
-        {
-          icon: <BookIcon />,
-          text: "Blog",
-          url: "/blog",
-          active: "nested-url",
-        },
-        {
-          icon: <BookIcon />,
-          text: "Docs",
-          url: "/docs",
-          active: "nested-url",
-        },
-        {
-          icon: <Book />,
-          text: "FumaDocs",
-          url: "/fumadocs",
-          active: "nested-url",
-        },
-      ]}
-    >
+    <DocsLayout tree={filterIndexPages(source.pageTree)} {...baseOptions()} >
       {children}
-    </DocsLayout>
+    </ DocsLayout>
   );
 }
