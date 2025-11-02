@@ -1,0 +1,69 @@
+# Project Context
+
+This is a **documentation project** built with **Fumadocs** - a modern documentation framework for Next.js.
+
+## Tech Stack
+
+- **Framework**: Next.js 15 (App Router)
+- **Documentation**: Fumadocs (fumadocs-core, fumadocs-mdx, fumadocs-ui)
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS
+- **Content Format**: MDX (Markdown with React components)
+- **Package Manager**: pnpm (preferred)
+
+## Project Structure
+
+### Content Collections
+
+- `content/docs/` - Main documentation content (MDX files)
+- `content/blog/` - Blog posts (MDX files)
+- `content/fumadocs/` - Fumadocs-specific documentation (MDX files)
+
+### Source Configuration
+
+- `source.config.ts` - Defines content collections and metadata schemas
+- `lib/source.ts` - Source loaders for each collection (docs, blog, fumadocs)
+
+### Routes
+
+- `app/docs/[[...slug]]/page.tsx` - Documentation pages
+- `app/blog/[[...slug]]/page.tsx` - Blog pages
+- `app/fumadocs/[[...slug]]/page.tsx` - Fumadocs documentation pages
+- `app/api/search/route.ts` - Search API endpoint
+
+## Guidelines
+
+### When working with content:
+
+- All content is written in MDX format (`.mdx` files)
+- Content files should follow Fumadocs frontmatter schema
+- Use the collections defined in `source.config.ts`
+- Respect the existing directory structure for content
+
+### When modifying code:
+
+- Follow TypeScript best practices
+- Use Fumadocs APIs and conventions
+- Maintain the existing source loader patterns
+- Keep layouts consistent with Fumadocs UI components
+
+### When adding features:
+
+- Leverage Fumadocs features (search, OG images, LLM text generation)
+- Use Fumadocs UI components from `fumadocs-ui`
+- Maintain consistency with existing documentation patterns
+
+## Key Files
+
+- `lib/source.ts` - Main source configuration and loaders
+- `source.config.ts` - Content collection definitions
+- `lib/layout.shared.tsx` - Shared layout options
+- `mdx-components.tsx` - MDX component overrides
+
+## Important Notes
+
+- This is a **documentation project**, not a general web application
+- All content should be written in MDX format
+- Fumadocs handles routing and page generation automatically
+- The project uses Fumadocs' built-in features for search, navigation, and metadata
+- When suggesting changes, consider how they affect the documentation experience
