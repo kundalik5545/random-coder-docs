@@ -1,0 +1,282 @@
+---
+title: Prisma Setup Guide
+---
+
+import { Accordion, Accordions } from "fumadocs-ui/components/accordion";
+import { CodeBlock } from "fumadocs-ui/components/codeblock";
+
+## 🏗️ Introduction
+
+Prisma is a powerful, type-safe ORM for Node.js and TypeScript. This guide helps you set up Prisma with PostgreSQL in your Next.js App Router project. Use the copy buttons and UI elements for clarity as you follow along.
+
+## What is Prisma?
+
+**Prisma** is an open-source toolkit that simplifies database access and management in modern application development. It consists of three main tools:
+
+- **Prisma ORM**: An object-relational mapping tool for TypeScript & Node.js.
+- **Prisma Migrate**: A declarative migration and schema system.
+- **Prisma Studio**: A GUI for viewing and editing data.
+
+Prisma supports various databases including PostgreSQL, MySQL, SQLite, and MongoDB—making it versatile for all your projects.
+
+---
+
+## Step-by-Step: Install & Set Up Prisma in Next.js
+
+### 1. Create a Next.js Project (App Router)
+
+```npm
+npx create-next-app@latest my-prisma-app
+cd my-prisma-app
+```
+
+When prompted, select **"Yes"** when asked about using the App Router.
+
+---
+
+### 2. Install Prisma as a Dev Dependency
+
+```npm
+npm install prisma --save-dev
+```
+
+---
+
+### 3. Initialize Prisma
+
+```npm
+npx prisma init
+```
+
+This command creates:
+
+- A `prisma/` directory with a `schema.prisma` file (where you define models/schemas)
+- A `.env` file (for database connection strings and secrets)
+
+---
+
+### 4. Connect to Your Database
+
+Edit `prisma/schema.prisma` and set up your datasource block for PostgreSQL:
+
+```prisma
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+```
+
+Now, update your `.env` file with your real credentials:
+
+```
+DATABASE_URL="postgresql://johndoe:randompassword@localhost:5432/mydb?schema=public"
+```
+
+_Update `johndoe`, `randompassword`, `localhost`, `5432`, and `mydb` as appropriate._
+
+---
+
+### 5. Define Your Data Models
+
+Open `prisma/schema.prisma` and add:
+
+```prisma
+model User {
+  id    Int     @id @default(autoincrement())
+  email String  @unique
+  name  String?
+  posts Post[]
+}
+
+model Post {
+id Int @id @default(autoincrement())
+title String
+content String?
+published Boolean @default(false)
+author User @relation(fields: [authorId], references: [id])
+authorId Int
+}
+
+```
+
+---
+
+### 6. Generate Prisma Client
+
+```npm
+npx prisma generate
+
+```
+
+This creates a custom, type-safe Prisma Client based on your schema.
+
+---
+
+### 7. Push Your Schema to the Database
+
+```npm
+npx prisma db push
+
+```
+
+This will create the necessary tables in your database.
+
+---
+
+### 8. (Optional) Use Prisma Studio
+
+```npm
+npx prisma studio
+```
+
+_Prima Studio_ opens at [http://localhost:5555](http://localhost:5555) for visual data editing.
+
+---
+
+## Install Prisma Client
+
+```npm
+npm install @prisma/client
+```
+
+---
+
+## Set Up a Prisma Client Singleton for Next.js
+
+Create a utility for consistent & safe access to `PrismaClient`, especially in development to avoid exhausting database connection limits.
+
+```ts
+// lib/db.ts
+import { PrismaClient } from "@prisma/client";
+
+const prismaClientSingleton = () => {
+  return new PrismaClient();
+};
+
+declare const globalThis: {
+  prismaGlobal?: ReturnType<typeof prismaClientSingleton>;
+} & typeof global;
+
+const prisma = globalThis.prismaGlobal ?? prismaClientSingleton();
+
+if (process.env.NODE_ENV !== "production") globalThis.prismaGlobal = prisma;
+
+export default prisma;
+```
+
+---
+
+## Using Prisma in Next.js (App Router)
+
+### 🟦 Fetch Data in a **Server Component**
+
+```tsx
+import prisma from "../lib/db";
+
+export default async function Home() {
+  const users = await prisma.user.findMany();
+
+  return (
+    <main>
+      <h1>Users</h1>
+      <ul>
+        {users.map((user) => (
+          <li key={user.id}>{user.name}</li>
+        ))}
+      </ul>
+    </main>
+  );
+}
+```
+
+---
+
+### 🟩 Fetch Data in a **Client Component** (via API Route)
+
+First, add an API route at `app/api/users/route.ts`:
+
+```ts
+import { NextResponse } from "next/server";
+import prisma from "../../../lib/db";
+
+export async function GET() {
+  const users = await prisma.user.findMany();
+  return NextResponse.json(users);
+}
+```
+
+Now, in your client component:
+
+```tsx
+"use client";
+import { useState, useEffect } from "react";
+
+export default function ClientComponent() {
+  const [users, setUsers] = useState([]);
+
+  useEffect(() => {
+    async function fetchUsers() {
+      const response = await fetch("/api/users");
+      const data = await response.json();
+      setUsers(data);
+    }
+    fetchUsers();
+  }, []);
+
+  return (
+    <div>
+      <h2>Users (Client Component)</h2>
+      <ul>
+        {users.map((user) => (
+          <li key={user.id}>{user.name}</li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+```
+
+---
+
+Remember to import and use this client component in your page or another server component.
+
+---
+
+## ⚠️ Prisma v5.16+ Update: `.env` is NOT Auto-Loaded
+
+**As of Prisma v5.16 (June 2024):**
+
+- `.env` is _not_ loaded automatically.
+- You must use a `prisma.config.ts` file and manually load dotenv.
+
+### Install dotenv
+
+```
+npm install dotenv
+```
+
+### Create `prisma.config.ts`
+
+```ts
+import "dotenv/config";
+import { defineConfig, env } from "prisma/config";
+
+export default defineConfig({
+  schema: "prisma/schema.prisma",
+  migrations: {
+    path: "prisma/migrations",
+  },
+  engine: "classic",
+  datasource: {
+    url: env("DATABASE_URL"),
+  },
+});
+```
+
+---
+
+By following these steps, your Prisma integration with Next.js App Router will be robust, efficient, and future-proof!
+
+```
+
+```
