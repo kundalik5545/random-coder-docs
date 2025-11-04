@@ -5,12 +5,22 @@ import {
     DocsPage,
     DocsTitle,
 } from "fumadocs-ui/page";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { getMDXComponents } from "@/mdx-components";
 import type { Metadata } from "next";
 import { createRelativeLink } from "fumadocs-ui/mdx";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 
 export default async function Page(props: PageProps<"/backend/[[...slug]]">) {
+    const session = await auth.api.getSession({
+        headers: await headers(),
+    });
+
+    if (!session) {
+        redirect("/sign-in?callbackUrl=/backend");
+    }
+
     const params = await props.params;
     const page = backendSource.getPage(params.slug);
     if (!page) return notFound();
