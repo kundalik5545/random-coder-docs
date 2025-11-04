@@ -8,9 +8,19 @@ import {
   DocsTitle,
 } from "fumadocs-ui/page";
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 
 export default async function Page(props: PageProps<"/fumadocs/[[...slug]]">) {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  if (!session) {
+    redirect("/sign-in?callbackUrl=/fumadocs");
+  }
+
   const params = await props.params;
   const page = fumadocsSource.getPage(params.slug);
   if (!page) return notFound();
