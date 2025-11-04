@@ -8,6 +8,8 @@ import {
   Database,
   Gauge,
   Brain,
+  ListTodo,
+  Notebook,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -57,9 +59,9 @@ export function baseOptions(): BaseLayoutProps {
         active: "nested-url",
       },
       {
-        icon: <Book />,
-        text: "FumaDocs",
-        url: "/fumadocs",
+        icon: <ListTodo />,
+        text: "Updates",
+        url: "/updates/todo-items",
         active: "nested-url",
       },
       {

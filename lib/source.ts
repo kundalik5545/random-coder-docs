@@ -299,9 +299,15 @@ export function filterIndexPages(tree: any): any {
         .map((item: any) => {
           // Recursively filter children
           if (item.children && Array.isArray(item.children)) {
+            const filtered = filterIndexPages(item);
+            // Ensure children is always an array (never undefined or non-iterable)
+            const filteredChildren =
+              filtered?.children && Array.isArray(filtered.children)
+                ? filtered.children
+                : [];
             return {
               ...item,
-              children: filterIndexPages({ children: item.children }).children,
+              children: filteredChildren,
             };
           }
           return item;

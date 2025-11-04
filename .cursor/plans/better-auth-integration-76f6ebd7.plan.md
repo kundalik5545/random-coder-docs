@@ -1,129 +1,155 @@
-<!-- 76f6ebd7-95dc-408d-8a6e-59dadb66cfe1 4e52e465-dae1-42c3-8f64-ad13e33a4117 -->
-# Better Auth Integration Plan
+<!-- 76f6ebd7-95dc-408d-8a6e-59dadb66cfe1 126bcf1a-c3f6-4487-b675-268fbdaeef14 -->
+# CRUD Pages for User Data Models Plan
 
 ## Overview
 
-Integrate Better Auth authentication system with Prisma ORM and PostgreSQL database to protect all documentation routes while keeping the home page public. Create sign-in and sign-up pages for user authentication.
+Create four dynamic pages under `/updates` route for managing user-specific data: Daily Notes, Daily Updates, Todo Items, and Copy Paste Materials. Each page will display data in table format with edit, delete, and add new functionality.
 
-**Important**: Better Auth MCP is available for accurate implementation guidance. Use Better Auth MCP tools to verify configuration patterns, check setup requirements, and get the latest implementation details during development.
+## Prisma Models Reference
+
+Based on the schema, we have:
+
+- **TodoItem**: id, userId, title, description, completed, createdAt, updatedAt
+- **DailyUpdate**: id, userId, title, description, createdAt, updatedAt
+- **DailyNote**: id, userId, title, description, createdAt, updatedAt
+- **CopyPasteMaterial**: id, userId, title, description, createdAt, updatedAt
+
+All models are user-scoped (userId relation to User).
 
 ## Implementation Steps
 
-### 1. Install Dependencies
+### 1. Create Prisma Client Singleton
 
-- Install `better-auth` package ✅
-- Install Prisma as dev dependency and  Prisma client  ✅
-- Install `pg` (PostgreSQL driver) and `@types/pg` for TypeScript support ✅
-- Install `dotenv` if not already present for environment variable management ✅
+- Create or update `lib/db.ts` with Prisma client singleton pattern
+- Ensure proper connection handling for Next.js App Router
+- Reuse existing PrismaClient instance if available
 
-### 2. Database Setup
+### 2. Create API Routes for CRUD Operations
 
-- Create `.env` file (if not exists) with `DATABASE_URL` for PostgreSQL connection ✅
-- Create `.env.example` with placeholder values
-- Set up PostgreSQL database schema (Better Auth will auto-generate tables on first run) ✅
+For each model, create API routes at:
 
-### 3. Better Auth Configuration
+- `app/api/todo-items/route.ts` - GET (list), POST (create)
+- `app/api/todo-items/[id]/route.ts` - GET (single), PATCH (update), DELETE (delete)
+- `app/api/daily-updates/route.ts` - GET (list), POST (create)
+- `app/api/daily-updates/[id]/route.ts` - GET (single), PATCH (update), DELETE (delete)
+- `app/api/daily-notes/route.ts` - GET (list), POST (create)
+- `app/api/daily-notes/[id]/route.ts` - GET (single), PATCH (update), DELETE (delete)
+- `app/api/copy-paste-materials/route.ts` - GET (list), POST (create)
+- `app/api/copy-paste-materials/[id]/route.ts` - GET (single), PATCH (update), DELETE (delete)
 
-- Create `lib/auth.ts` - Main Better Auth instance with: ✅
-- PostgreSQL Pool configuration ✅
-- Email/password authentication enabled ✅
-- Base URL configuration ✅
-- Cookie settings
-- Create `lib/auth-client.ts` - Client-side auth instance for React components ✅
+Each API route should:
 
-### 4. API Routes
+- Validate user session using `auth.api.getSession()`
+- Filter data by userId for security
+- Handle errors appropriately
+- Return proper HTTP status codes
 
-- Create `app/api/auth/[...all]/route.ts` - Main auth API handler using `toNextJsHandler`
-- This handles all auth endpoints (sign-in, sign-up, sign-out, session, etc.)
+### 3. Create Reusable Table Component
 
-### 6. Middleware for Route Protection
+- Create `components/data-table.tsx` - Reusable table component with:
+- Table display with columns (Title, Description, Created At, Updated At, Actions)
+- Edit button (opens modal/form)
+- Delete button (with confirmation)
+- Responsive design matching Fumadocs theme
+- Loading states
+- Empty state when no data
 
-- Create `middleware.ts` at root level to protect routes:
-- Use `getSessionCookie` for optimistic redirect (faster)
-- Protect routes: `/docs`, `/ai-ml`, `/automation`, `/frontend`, `/backend`, `/blog`, `/fumadocs`, `/performance`, `/sql`
-- Keep `/` (home) and `/sign-in`, `/sign-up` public
-- Redirect unauthenticated users to `/sign-in`
+### 4. Create Form Modal Component
 
-### 6. Authentication Pages
+- Create `components/data-form-modal.tsx` - Reusable form modal for create/edit:
+- Title input field
+- Description textarea field
+- Submit and cancel buttons
+- Form validation
+- Loading states during submission
+- Error handling
 
-- Create `app/sign-in/page.tsx` - Sign-in page with:
-- Email and password form
-- Client-side form handling using `authClient.signIn.email`
-- Error handling and success redirect
-- Styling consistent with Fumadocs theme
+### 5. Create Page Components and Route Structure
 
-- Create `app/sign-up/page.tsx` - Sign-up page with:
-- Name, email, and password form
-- Client-side form handling using `authClient.signUp.email`
-- Error handling and success redirect
-- Link to sign-in page
-- Styling consistent with Fumadocs theme
+Create new `/updates` route structure:
 
-### 7. Server-Side Session Validation
+- Create `app/updates/layout.tsx` - Layout for updates section with authentication protection
+- Create `app/updates/page.tsx` - Index/landing page for updates section (optional, or redirect to one of the pages)
 
-- Update protected route pages to validate sessions server-side:
-- `app/docs/[[...slug]]/page.tsx`
-- `app/ai-ml/[[...slug]]/page.tsx`
-- `app/automation/[[...slug]]/page.tsx`
-- `app/frontend/[[...slug]]/page.tsx`
-- `app/backend/[[...slug]]/page.tsx`
-- `app/blog/[[...slug]]/page.tsx`
-- `app/fumadocs/[[...slug]]/page.tsx`
-- `app/performance/[[...slug]]/page.tsx`
-- `app/sql/[[...slug]]/page.tsx`
+Create pages under `/updates` route:
 
-- Add session check using `auth.api.getSession` with `headers()` from Next.js
-- Redirect to `/sign-in` if no session exists
+- `app/updates/daily-notes/page.tsx` - Daily Notes page
+- `app/updates/daily-updates/page.tsx` - Daily Updates page
+- `app/updates/todo-items/page.tsx` - Todo Items page (with completed checkbox)
+- `app/updates/copy-paste-materials/page.tsx` - Copy Paste Materials page
 
-### 8. Layout Updates
+Each page should:
 
-- Optionally add user menu/sign-out button to navigation in `lib/layout.shared.tsx`
-- Update navigation to show auth state (authenticated vs unauthenticated)
+- Be a client component (for interactivity) - use TypeScript
+- Fetch data using API routes
+- Display data in table format using reusable table component
+- Include "Add New" button
+- Handle edit/delete operations
+- Show loading and error states
+- Be protected by authentication (handled by updates layout)
 
-### 9. Type Safety
+### 6. Todo Items Special Handling
 
-- Ensure TypeScript types are properly configured for Better Auth
-- Export auth types for use across the application
+- Add completed checkbox in table
+- Add toggle functionality for completed status
+- Update API to handle completed status changes
+- Show visual distinction for completed items
+
+### 7. Data Formatting and Display
+
+- Format dates (createdAt, updatedAt) in readable format
+- Truncate long descriptions in table view
+- Show full description in edit modal
+- Handle null/empty descriptions gracefully
 
 ## Files to Create/Modify
 
 ### New Files:
 
-- `lib/auth.ts` - Better Auth server configuration
-- `lib/auth-client.ts` - Better Auth client configuration
-- `app/api/auth/[...all]/route.ts` - Auth API handler
-- `middleware.ts` - Route protection middleware
-- `app/sign-in/page.tsx` - Sign-in page
-- `app/sign-up/page.tsx` - Sign-up page
-- `.env.example` - Environment variable template
+- `lib/db.ts` - Prisma client singleton
+- `components/data-table.tsx` - Reusable table component
+- `components/data-form-modal.tsx` - Reusable form modal
+- `app/api/todo-items/route.ts` - Todo items list/create API
+- `app/api/todo-items/[id]/route.ts` - Todo items update/delete API
+- `app/api/daily-updates/route.ts` - Daily updates list/create API
+- `app/api/daily-updates/[id]/route.ts` - Daily updates update/delete API
+- `app/api/daily-notes/route.ts` - Daily notes list/create API
+- `app/api/daily-notes/[id]/route.ts` - Daily notes update/delete API
+- `app/api/copy-paste-materials/route.ts` - Copy paste materials list/create API
+- `app/api/copy-paste-materials/[id]/route.ts` - Copy paste materials update/delete API
+- `app/docs/daily-notes/page.tsx` - Daily Notes page
+- `app/docs/daily-updates/page.tsx` - Daily Updates page
+- `app/docs/todo-items/page.tsx` - Todo Items page
+- `app/docs/copy-paste-materials/page.tsx` - Copy Paste Materials page
 
 ### Modified Files:
 
-- `package.json` - Add dependencies
-- `app/docs/[[...slug]]/page.tsx` - Add session validation
-- `app/ai-ml/[[...slug]]/page.tsx` - Add session validation
-- `app/automation/[[...slug]]/page.tsx` - Add session validation
-- `app/frontend/[[...slug]]/page.tsx` - Add session validation
-- `app/backend/[[...slug]]/page.tsx` - Add session validation
-- `app/blog/[[...slug]]/page.tsx` - Add session validation
-- `app/fumadocs/[[...slug]]/page.tsx` - Add session validation
-- `app/performance/[[...slug]]/page.tsx` - Add session validation
-- `app/sql/[[...slug]]/page.tsx` - Add session validation
-- `lib/layout.shared.tsx` - Optionally add auth UI elements
+- Potentially update `app/ds/[[...slug]]/page.tsx` to handle dynamic routes (if needed)
 
 ## Security Considerations
 
-- Middleware provides optimistic redirect (cookie check only)
-- Each protected route validates session server-side for actual security
-- Environment variables for sensitive data (database URL, secrets)
-- Better Auth handles password hashing automatically
+- All API routes must validate user session
+- Filter all queries by userId to ensure users only see their own data
+- Validate input data (title, description)
+- Prevent SQL injection via Prisma parameterized queries
+- Handle unauthorized access attempts
 
-## Notes
+## User Experience
 
-- Better Auth will auto-generate database tables on first run
-- PostgreSQL connection pool will be managed by Better Auth
-- Email/password is the default auth method; can be extended later with social providers
-- Sign-in and sign-up pages will use client-side auth client for reactive state management
+- Smooth loading states during data fetch
+- Optimistic updates for better UX
+- Confirmation dialogs for delete operations
+- Clear error messages
+- Success feedback after operations
+- Responsive table design for mobile devices
+
+## Technical Notes
+
+- Use Next.js App Router patterns
+- Leverage existing Fumadocs theme styling
+- Use React Server Components where possible, Client Components for interactivity
+- Implement proper error boundaries
+- Consider pagination for large datasets (future enhancement)
 
 ### To-dos
 
