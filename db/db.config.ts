@@ -1,5 +1,6 @@
 // lib/db.ts
-import { PrismaClient } from "@prisma/client";
+
+import { PrismaClient } from "@/lib/generated/prisma";
 
 const prismaClientSingleton = () => {
   return new PrismaClient();

@@ -17,11 +17,14 @@ export function UserDropdown({
 }: { dropdownPosition?: DropdownPosition }) {
     const router = useRouter();
     const [isOpen, setIsOpen] = useState(false);
+    const [mounted, setMounted] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
     const { data: session, isPending } = authClient.useSession();
 
-
-
+    // Handle client-side mounting to prevent hydration issues
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
     // Close dropdown when clicking outside
     useEffect(() => {
@@ -55,7 +58,22 @@ export function UserDropdown({
         setIsOpen(false);
     };
 
-    if (isPending || !session?.user) {
+    // Don't render anything until mounted on client (prevents hydration mismatch)
+    if (!mounted) {
+        return null;
+    }
+
+    // Show loading state while pending (don't return null immediately)
+    if (isPending) {
+        return (
+            <div className="flex items-center gap-2 rounded-md px-3 py-2">
+                <div className="h-8 w-8 animate-pulse rounded-full bg-fd-muted" />
+            </div>
+        );
+    }
+
+    // Only return null if we're sure there's no session (not just loading)
+    if (!session?.user) {
         return null;
     }
 
