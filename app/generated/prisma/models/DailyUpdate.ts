@@ -165,7 +165,7 @@ export type DailyUpdateGroupByOutputType = {
   _max: DailyUpdateMaxAggregateOutputType | null
 }
 
-type GetDailyUpdateGroupByPayload<T extends DailyUpdateGroupByArgs> = Prisma.PrismaPromise<
+export type GetDailyUpdateGroupByPayload<T extends DailyUpdateGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<DailyUpdateGroupByOutputType, T['by']> &
       {
@@ -1157,6 +1157,11 @@ export type DailyUpdateFindManyArgs<ExtArgs extends runtime.Types.Extensions.Int
    * Skip the first `n` DailyUpdates.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of DailyUpdates.
+   */
   distinct?: Prisma.DailyUpdateScalarFieldEnum | Prisma.DailyUpdateScalarFieldEnum[]
 }
 

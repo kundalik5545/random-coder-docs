@@ -172,7 +172,7 @@ export type TodoItemGroupByOutputType = {
   _max: TodoItemMaxAggregateOutputType | null
 }
 
-type GetTodoItemGroupByPayload<T extends TodoItemGroupByArgs> = Prisma.PrismaPromise<
+export type GetTodoItemGroupByPayload<T extends TodoItemGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<TodoItemGroupByOutputType, T['by']> &
       {
@@ -1198,6 +1198,11 @@ export type TodoItemFindManyArgs<ExtArgs extends runtime.Types.Extensions.Intern
    * Skip the first `n` TodoItems.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of TodoItems.
+   */
   distinct?: Prisma.TodoItemScalarFieldEnum | Prisma.TodoItemScalarFieldEnum[]
 }
 

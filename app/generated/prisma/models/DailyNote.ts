@@ -165,7 +165,7 @@ export type DailyNoteGroupByOutputType = {
   _max: DailyNoteMaxAggregateOutputType | null
 }
 
-type GetDailyNoteGroupByPayload<T extends DailyNoteGroupByArgs> = Prisma.PrismaPromise<
+export type GetDailyNoteGroupByPayload<T extends DailyNoteGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<DailyNoteGroupByOutputType, T['by']> &
       {
@@ -1157,6 +1157,11 @@ export type DailyNoteFindManyArgs<ExtArgs extends runtime.Types.Extensions.Inter
    * Skip the first `n` DailyNotes.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of DailyNotes.
+   */
   distinct?: Prisma.DailyNoteScalarFieldEnum | Prisma.DailyNoteScalarFieldEnum[]
 }
 

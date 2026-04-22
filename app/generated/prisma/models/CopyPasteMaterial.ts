@@ -165,7 +165,7 @@ export type CopyPasteMaterialGroupByOutputType = {
   _max: CopyPasteMaterialMaxAggregateOutputType | null
 }
 
-type GetCopyPasteMaterialGroupByPayload<T extends CopyPasteMaterialGroupByArgs> = Prisma.PrismaPromise<
+export type GetCopyPasteMaterialGroupByPayload<T extends CopyPasteMaterialGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<CopyPasteMaterialGroupByOutputType, T['by']> &
       {
@@ -1157,6 +1157,11 @@ export type CopyPasteMaterialFindManyArgs<ExtArgs extends runtime.Types.Extensio
    * Skip the first `n` CopyPasteMaterials.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of CopyPasteMaterials.
+   */
   distinct?: Prisma.CopyPasteMaterialScalarFieldEnum | Prisma.CopyPasteMaterialScalarFieldEnum[]
 }
 
