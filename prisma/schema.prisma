@@ -1,23 +1,20 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
-  provider = "prisma-client-js"
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 model User {
-  id                 String               @id
+  id                 String              @id
   name               String
   email              String
-  emailVerified      Boolean              @default(false)
+  emailVerified      Boolean             @default(false)
   image              String?
-  createdAt          DateTime             @default(now())
-  updatedAt          DateTime             @default(now()) @updatedAt
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @default(now()) @updatedAt
   sessions           Session[]
   accounts           Account[]
   todoItems          TodoItem[]
@@ -74,7 +71,6 @@ model Verification {
   @@map("verification")
 }
 
-
 model TodoItem {
   id          String   @id @default(uuid())
   userId      String
@@ -124,4 +120,3 @@ model CopyPasteMaterial {
 
   @@map("copy_paste_material")
 }
-
